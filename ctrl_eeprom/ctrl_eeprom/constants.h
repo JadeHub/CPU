@@ -15,7 +15,7 @@ meaning:	MAW	MW	ME	RAW	RAE	RBW	RBE	IRW		PCW	PCC	PCE	MCR	HLT	SPE	SPW	OUTW
 
 			7	6	5	4	3	2	1	0		7	6	5	4	3	2	1	0
 bit:		15	14	13	12	11	10	9	8		7	6	5	4	3	2	1	0
-meaning:	AS3	AS2	AS1	AS0	ACR	AMD	AOE	--		--	--	--	--	--	--	--	--
+meaning:	AS3	AS2	AS1	AS0	ACR	AMD	ALE	ALW		--	--	--	--	--	--	--	--
 */
 
 #define MAW	((uint32_t)1 << 31) //Mem Address Write
@@ -42,7 +42,8 @@ meaning:	AS3	AS2	AS1	AS0	ACR	AMD	AOE	--		--	--	--	--	--	--	--	--
 #define AS0 ((uint32_t)1 << 12) //ALU CTRL 0
 #define ACR ((uint32_t)1 << 11) //ALU Carry in
 #define AMD ((uint32_t)1 << 10) //ALU Mode
-#define AOE ((uint32_t)1 << 9)  //ALU Out Enable
+#define ALE ((uint32_t)1 << 9)  //ALU Out Enable
+#define ALW ((uint32_t)1 << 8)	//ALU Write
 
 //First two cycles common to all instructions
 #define FETCH0 (MAW | PCE)		//Program counter to memory address register
@@ -52,7 +53,7 @@ inline uint32_t flip_active_low_signals(uint32_t ctrl_word)
 {
 	return ctrl_word ^= 
 			(MAW | MW | ME | RAW | RAE | RBW | RBE | IRW | PCW | 
-			/*PCC |*/ PCE | MCR | HLT | SPE | SPW | OUTW | AOE);
+			/*PCC |*/ PCE | MCR | HLT | SPE | SPW | OUTW | ALE | ALW);
 }
 
 
@@ -60,9 +61,10 @@ inline uint32_t flip_active_low_signals(uint32_t ctrl_word)
 EEPROM Input
 13 address lines
 bit:		12	11	10	9	8	7	6	5	4	3	2	1	0
-meaning:	MC	MC	MC	--	--	<---- instruction code  ---->		
+meaning:	MC	MC	MC	CR	JMP	<---- instruction code  ---->		
 */
 
+//Micro Counter steps
 #define MC_STEP0 ((uint16_t)0)
 #define MC_STEP1 ((uint16_t)1 << 10)
 #define MC_STEP2 ((uint16_t)2 << 10)
@@ -71,6 +73,20 @@ meaning:	MC	MC	MC	--	--	<---- instruction code  ---->
 #define MC_STEP5 ((uint16_t)5 << 10)
 #define MC_STEP6 ((uint16_t)6 << 10)
 #define MC_STEP7 ((uint16_t)7 << 10)
+
+//Conditional inputs
+#define CND_JMP ((uint16_t)1 << 8)	//Jump
+#define CND_CR ((uint16_t)1 << 9)	//Carry
+
+inline bool condition_set(uint16_t cond, uint16_t addr)
+{
+	return addr & cond;
+}
+
+inline uint16_t add_condition(uint16_t cond, uint16_t addr)
+{
+	return addr | cond;
+}
 
 //return step number from eeprom address
 inline uint8_t step_no(uint16_t addr)
@@ -116,7 +132,7 @@ inline uint32_t reg_read(uint8_t reg)
 	case(R_SP):
 		return SPE;
 	case(R_ALO):
-		return AOE;
+		return ALE;
 	}
 	assert(false);
 	return 0;
@@ -210,28 +226,29 @@ inline uint32_t alu_ctrl(uint8_t aluOp)
 	switch (aluOp)
 	{
 	case(ALU_INC):
-		return ((uint32_t)0);
+		return ((uint32_t)0 | ALW);
 	case(ALU_DEC):
-		return ((uint32_t)AS3 | AS2 | AS1 | AS0 | ACR);
+		return ((uint32_t)AS3 | AS2 | AS1 | AS0 | ACR | ALW);
 	case(ALU_ADD):
-		return ((uint32_t)AS3 | AS0 | ACR);
+		return ((uint32_t)AS3 | AS0 | ACR | ALW);
 	case(ALU_ADC): 
-		return ((uint32_t)AS3 | AS0);
+		return ((uint32_t)AS3 | AS0 | ALW);
 	case(ALU_SUB): 
-		return ((uint32_t)AS2 | AS1);
+		return ((uint32_t)AS2 | AS1 | ALW);
 	case(ALU_SBC):
+		return ((uint32_t)AS2 | AS1 | ACR | ALW);
 	case(ALU_CMP):
-		return ((uint32_t)AS2 | AS1 | ACR);
+		return ((uint32_t)AS2 | AS1 | ACR | ALW);
 	case(ALU_SFT): 
-		return ((uint32_t)AS3 | AS2 | ACR);
+		return ((uint32_t)AS3 | AS2 | ACR | ALW);
 	case(ALU_NOT): 
-		return ((uint32_t)AMD);
+		return ((uint32_t)AMD | ALW);
 	case(ALU_AND): 
-		return ((uint32_t)AMD | AS3 | AS1 | AS0);
+		return ((uint32_t)AMD | AS3 | AS1 | AS0 | ALW);
 	case(ALU_OR): 
-		return ((uint32_t)AMD | AS3 | AS2 | AS1);
+		return ((uint32_t)AMD | AS3 | AS2 | AS1 | ALW);
 	case(ALU_XOR): 
-		return ((uint32_t)AMD | AS2 | AS1);
+		return ((uint32_t)AMD | AS2 | AS1 | ALW);
 	}
 	assert(false);
 	return 0;
@@ -256,8 +273,7 @@ ancillary insts:	1	1	X	X	X	X	X	X
 	Ret:			1	1	1	1	1	0	1	0		0xFA
 	No op:			1	1	1	1	1	1	1	1		0xFF
 	
-
-* Jmp instructions are a mov into the program counter
+* Jmp instructions allow a register or an immediate address
 * Immediate values are loaded by dereferencing the program counter
 
 Source register encoding
@@ -332,7 +348,7 @@ inline char* dest_reg_name(uint8_t reg, bool deref)
 	case(R_OUT):
 		return "OUT";
 	case(R_PC):
-		return "[PC]";
+		return "[[PC]]";
 	}
 	return "";
 }

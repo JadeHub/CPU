@@ -59,15 +59,20 @@ void setup() {
 
  // setAddress(16);
 
-  write(0, 1);
-  write(1, 7);
-  write(2, 2);
-  write(3, 3);
-  write(4, 4);
-  write(5, 8);
-  write(7, 10);
-  write(8, 5);
- 
+  write(0, 134);
+  write(1, 5);
+  write(2, 150);
+  write(3, 5);
+  write(4, 40);
+  write(5, 214);
+  write(6, 64);
+  write(7, 249);
+  write(64, 249);
+  /*write(9, 12);
+  write(10, 238);
+  write(11, 4u);
+  write(12, 249);
+ */
   digitalWrite(OE, HIGH);
   pinMode(CPU_CLK, INPUT);
   pinMode(MAW, INPUT);
