@@ -254,7 +254,17 @@ inline uint32_t alu_ctrl(uint8_t aluOp)
 	return 0;
 }
 
-
+#define INSTR_CALL		0xC0
+#define INSTR_JZ		0xC8
+#define INSTR_JE		0xD0
+#define INSTR_JN		0xE0
+#define INSTR_JC		0xD8
+#define INSTR_JMP		0xE8
+#define INSTR_PUSH		0xF0
+#define INSTR_POP		0xF8
+#define INSTR_HALT		0xF9
+#define INSTR_RET		0xFA
+#define INSTR_NOOP		0xFF
 /*
 instruction encoding
 bit:				7	6	5	4	3	2	1	0
@@ -374,7 +384,7 @@ inline uint8_t encode_dest_reg(uint8_t reg, bool deref)
 	return 0;
 }
 
-inline uint8_t make_mov_instruction(uint8_t dest_reg, uint8_t src_reg)
+inline uint8_t make_mov_instruction_code(uint8_t dest_reg, uint8_t src_reg)
 {
 	return 128 | (dest_reg << 3) | src_reg;
 }
@@ -392,5 +402,10 @@ meaning :	0	<- 4 bit OP->   <- SRC ->
 */
 inline uint8_t make_alu_instruction_code(uint8_t op, uint8_t src_reg)
 {
-	return 0 | (op << 3) | src_reg;
+	return (op << 3) | src_reg;
+}
+
+inline uint8_t make_ancillory_instruction_code(uint8_t op, uint8_t src_reg)
+{
+	return op | src_reg;
 }

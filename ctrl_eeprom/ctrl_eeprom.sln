@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ctrl_eeprom", "ctrl_eeprom\ctrl_eeprom.vcxproj", "{9F631290-57CF-4B32-B683-3FB7EC3EB6F6}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ams", "ams\ams.vcxproj", "{A9D716C9-D6CB-4B86-994E-95FA664B0424}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "asm", "asm\ams.vcxproj", "{A9D716C9-D6CB-4B86-994E-95FA664B0424}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

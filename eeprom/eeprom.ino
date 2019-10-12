@@ -59,8 +59,8 @@ bool isStep0Addr(int addr)
 }
 
 //#define CHIP0
-//#define CHIP1
-#define CHIP2
+#define CHIP1
+//#define CHIP2
 
 #define CHIP0_NULL 255
 #define CHIP1_NULL 191
@@ -79,15 +79,15 @@ void writeROM() {
   for(int addr=0; addr<EEPROM_SIZE; addr++) {
     if (isStep0Addr(addr))
     {
-      writeEEPROM(addr, CHIP2_STEP0);
+      writeEEPROM(addr, CHIP1_STEP0);
     }
     else if (isStep1Addr(addr)) 
     {
-      writeEEPROM(addr, CHIP2_STEP1);
+      writeEEPROM(addr, CHIP1_STEP1);
     }
     else
     {
-      writeEEPROM(addr, CHIP2_NULL);
+      writeEEPROM(addr, CHIP1_NULL);
     }
     if (addr % 64 == 0) {
       Serial.print(".");
@@ -95,6 +95,7 @@ void writeROM() {
   }
   
   Serial.println("working");
+
   #ifdef CHIP0
 writeEEPROM(2048, 255);
 writeEEPROM(2049, 119);
@@ -241,6 +242,7 @@ writeEEPROM(2512, 247);
 writeEEPROM(2514, 253);
 writeEEPROM(2516, 255);
 writeEEPROM(2518, 127);
+writeEEPROM(2526, 255);
 writeEEPROM(2528, 247);
 writeEEPROM(2530, 253);
 writeEEPROM(2532, 255);
@@ -317,10 +319,13 @@ writeEEPROM(2735, 127);
 writeEEPROM(2736, 127);
 writeEEPROM(2738, 127);
 writeEEPROM(2740, 127);
+writeEEPROM(2766, 255);
+writeEEPROM(2774, 255);
 writeEEPROM(2776, 247);
 writeEEPROM(2778, 253);
 writeEEPROM(2780, 255);
 writeEEPROM(2782, 127);
+writeEEPROM(2790, 255);
 writeEEPROM(2792, 247);
 writeEEPROM(2794, 253);
 writeEEPROM(2796, 255);
@@ -463,6 +468,10 @@ writeEEPROM(3247, 95);
 writeEEPROM(3248, 183);
 writeEEPROM(3250, 189);
 writeEEPROM(3252, 191);
+writeEEPROM(3278, 255);
+writeEEPROM(3286, 255);
+writeEEPROM(3294, 255);
+writeEEPROM(3302, 255);
 writeEEPROM(3310, 223);
 writeEEPROM(3322, 223);
 writeEEPROM(3328, 127);
@@ -799,6 +808,7 @@ writeEEPROM(2512, 47);
 writeEEPROM(2514, 47);
 writeEEPROM(2516, 47);
 writeEEPROM(2518, 159);
+writeEEPROM(2526, 239);
 writeEEPROM(2528, 47);
 writeEEPROM(2530, 47);
 writeEEPROM(2532, 47);
@@ -875,10 +885,13 @@ writeEEPROM(2735, 159);
 writeEEPROM(2736, 159);
 writeEEPROM(2738, 159);
 writeEEPROM(2740, 159);
+writeEEPROM(2766, 239);
+writeEEPROM(2774, 239);
 writeEEPROM(2776, 47);
 writeEEPROM(2778, 47);
 writeEEPROM(2780, 47);
 writeEEPROM(2782, 159);
+writeEEPROM(2790, 239);
 writeEEPROM(2792, 47);
 writeEEPROM(2794, 47);
 writeEEPROM(2796, 47);
@@ -1021,6 +1034,10 @@ writeEEPROM(3247, 255);
 writeEEPROM(3248, 239);
 writeEEPROM(3250, 239);
 writeEEPROM(3252, 239);
+writeEEPROM(3278, 239);
+writeEEPROM(3286, 239);
+writeEEPROM(3294, 239);
+writeEEPROM(3302, 239);
 writeEEPROM(3310, 47);
 writeEEPROM(3322, 63);
 writeEEPROM(3328, 189);
@@ -1233,7 +1250,7 @@ writeEEPROM(2094, 3);
 writeEEPROM(2096, 202);
 writeEEPROM(2097, 3);
 writeEEPROM(2102, 3);
-writeEEPROM(2104, 107);
+writeEEPROM(2104, 106);
 writeEEPROM(2105, 3);
 writeEEPROM(2110, 3);
 writeEEPROM(2112, 6);
@@ -1305,7 +1322,7 @@ writeEEPROM(2350, 3);
 writeEEPROM(2352, 202);
 writeEEPROM(2353, 3);
 writeEEPROM(2358, 3);
-writeEEPROM(2360, 107);
+writeEEPROM(2360, 106);
 writeEEPROM(2361, 3);
 writeEEPROM(2366, 3);
 writeEEPROM(2368, 6);
@@ -1357,6 +1374,7 @@ writeEEPROM(2512, 3);
 writeEEPROM(2514, 3);
 writeEEPROM(2516, 1);
 writeEEPROM(2518, 3);
+writeEEPROM(2526, 3);
 writeEEPROM(2528, 3);
 writeEEPROM(2530, 3);
 writeEEPROM(2532, 1);
@@ -1389,7 +1407,7 @@ writeEEPROM(2606, 3);
 writeEEPROM(2608, 202);
 writeEEPROM(2609, 3);
 writeEEPROM(2614, 3);
-writeEEPROM(2616, 107);
+writeEEPROM(2616, 106);
 writeEEPROM(2617, 3);
 writeEEPROM(2622, 3);
 writeEEPROM(2624, 6);
@@ -1433,10 +1451,13 @@ writeEEPROM(2735, 3);
 writeEEPROM(2736, 3);
 writeEEPROM(2738, 3);
 writeEEPROM(2740, 3);
+writeEEPROM(2766, 3);
+writeEEPROM(2774, 3);
 writeEEPROM(2776, 3);
 writeEEPROM(2778, 3);
 writeEEPROM(2780, 1);
 writeEEPROM(2782, 3);
+writeEEPROM(2790, 3);
 writeEEPROM(2792, 3);
 writeEEPROM(2794, 3);
 writeEEPROM(2796, 1);
@@ -1465,7 +1486,7 @@ writeEEPROM(2862, 3);
 writeEEPROM(2864, 202);
 writeEEPROM(2865, 3);
 writeEEPROM(2870, 3);
-writeEEPROM(2872, 107);
+writeEEPROM(2872, 106);
 writeEEPROM(2873, 3);
 writeEEPROM(2878, 3);
 writeEEPROM(2880, 6);
@@ -1547,8 +1568,8 @@ writeEEPROM(3113, 106);
 writeEEPROM(3118, 106);
 writeEEPROM(3121, 202);
 writeEEPROM(3126, 202);
-writeEEPROM(3129, 107);
-writeEEPROM(3134, 107);
+writeEEPROM(3129, 106);
+writeEEPROM(3134, 106);
 writeEEPROM(3137, 6);
 writeEEPROM(3142, 6);
 writeEEPROM(3145, 182);
@@ -1579,6 +1600,10 @@ writeEEPROM(3247, 3);
 writeEEPROM(3248, 3);
 writeEEPROM(3250, 3);
 writeEEPROM(3252, 1);
+writeEEPROM(3278, 3);
+writeEEPROM(3286, 3);
+writeEEPROM(3294, 3);
+writeEEPROM(3302, 3);
 writeEEPROM(3310, 3);
 writeEEPROM(3322, 3);
 writeEEPROM(3328, 1);
@@ -1596,8 +1621,8 @@ writeEEPROM(3369, 106);
 writeEEPROM(3374, 106);
 writeEEPROM(3377, 202);
 writeEEPROM(3382, 202);
-writeEEPROM(3385, 107);
-writeEEPROM(3390, 107);
+writeEEPROM(3385, 106);
+writeEEPROM(3390, 106);
 writeEEPROM(3393, 6);
 writeEEPROM(3398, 6);
 writeEEPROM(3401, 182);
@@ -1648,8 +1673,8 @@ writeEEPROM(3625, 106);
 writeEEPROM(3630, 106);
 writeEEPROM(3633, 202);
 writeEEPROM(3638, 202);
-writeEEPROM(3641, 107);
-writeEEPROM(3646, 107);
+writeEEPROM(3641, 106);
+writeEEPROM(3646, 106);
 writeEEPROM(3649, 6);
 writeEEPROM(3654, 6);
 writeEEPROM(3657, 182);
@@ -1698,8 +1723,8 @@ writeEEPROM(3881, 106);
 writeEEPROM(3886, 106);
 writeEEPROM(3889, 202);
 writeEEPROM(3894, 202);
-writeEEPROM(3897, 107);
-writeEEPROM(3902, 107);
+writeEEPROM(3897, 106);
+writeEEPROM(3902, 106);
 writeEEPROM(3905, 6);
 writeEEPROM(3910, 6);
 writeEEPROM(3913, 182);
@@ -1770,7 +1795,7 @@ writeEEPROM(6656, 3);
 writeEEPROM(6912, 3);
 #endif //CHIP2
 
-  Serial.println("ROM 1 complete");
+  Serial.println("EEPROM complete");
 }
 
 void setup()
