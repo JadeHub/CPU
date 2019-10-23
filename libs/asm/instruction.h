@@ -1,67 +1,60 @@
 #pragma once
 
-#include <ostream>
+#include "source_line.h"
+
 #include <string>
 #include <optional>
+#include <functional>
 
 namespace Cpu {
 
-/*
-label:	MOV A, [42]
-		MOV A, [#label]
-		MOV A, B
-		MOV A, 42
-		MOV A, #label
-		MOV [42], A
-		MOV [A], B
-		
-		ADD A
-		ADD [A]
-		ADD 42
-		ADD [42]
-
-		JMP A
-		JMP [42]
-		JMP 42
-
-		PUSH A
-		POP A
-
-		CALL A
-		CALL 42
-
-		RET
-		HALT
-		NOOP
-
-*/
+class SourceLine;
 
 class Parameter
 {
+public:
+	Parameter(const std::string& param);
 
+	bool IsLiteral() const {return mLiteral.has_value();}
+	uint8_t Literal() const {return *mLiteral;}
+
+	bool IsRegister() const {return mReg.has_value();}
+	uint8_t Register() const {return *mReg;}
+
+	bool IsDereferenced() const {return mDeref;}
+	bool IsLabel() const {return mLabel.has_value();}
+	const std::string& Label() const {return *mLabel;}
+
+private:
+	std::optional<uint8_t> mLiteral;
+	std::optional<uint8_t> mReg;
+	std::optional<std::string> mLabel;
+	bool mDeref = false;
 };
-
-using OptionalString = std::optional<std::string>;
 
 class Instruction
 {
 public:
+	Instruction(const SourceLine& line);
+	uint8_t EncodedLength() const;
+	std::vector<uint8_t> Encode(std::function<uint8_t (const std::string&)> resolveLabel) const;
 
-	static Instruction Parse(const std::string& line);
-
-	void Print(std::ostream&);
-
-	uint8_t Size() const { return 1; }
 private:
+	//static void CheckCond(bool cond, const char* error);
 
-	//label: MOV A, [12]
+	std::vector<uint8_t> EncodeMov() const;
+	std::vector<uint8_t> EncodeJump(std::function<uint8_t(const std::string&)> resolveLabel) const;
+	std::vector<uint8_t> EncodeAlu() const;
+	std::vector<uint8_t> EncodeAncillary() const;
 
+	bool IsMovOp() const;
+	bool IsAluOp() const;
+	bool IsJumpOp() const;
+	bool IsAncillaryOpCode() const;
 
-	OptionalString mLabel;
-	std::string mInstr;
-	OptionalString mParam1;
-	OptionalString mParam2;
-	OptionalString mComment;
+	SourceLine mLine;
+	std::optional<Parameter> mParam1;
+	std::optional<Parameter> mParam2;
 };
 
 }

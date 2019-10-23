@@ -99,19 +99,6 @@ inline uint16_t make_address(uint16_t mc_step, uint8_t instruction)
 	return mc_step | instruction;
 }
 
-/*
-Registers
-
-REG   R   [R]   W   [W]
------------------------
-A     Y    Y    Y    Y
-B     Y    Y    Y    Y
-ALO   Y    Y    N    Y
-PC    N    Y    Y    N (Read Immediate, JMP)
-OUT   N    N    Y    N
-SP    N    Y    N    Y (Push, Pop)
-*/
-
 #define R_A			1		//A Register
 #define R_B			2		//B Register
 #define R_PC		3		//Program Counter
@@ -188,7 +175,7 @@ XOR		L	H	H	L	H	X
 #define ALU_OR  ((uint8_t) 10)	//Bus | B Register
 #define ALU_XOR ((uint8_t) 11)	//Bus ^ B Register
 
-const char* alu_op_name(uint8_t aluOp)
+inline const char* alu_op_name(uint8_t aluOp)
 {
 	switch (aluOp)
 	{
@@ -354,7 +341,8 @@ inline char* dest_reg_name(uint8_t reg, bool deref)
 	case(R_B):
 		return deref ? "[B]" : "B";
 	case(R_ALO):
-		return "ALO";
+		assert(deref);
+		return "[ALO]";
 	case(R_OUT):
 		return "OUT";
 	case(R_PC):

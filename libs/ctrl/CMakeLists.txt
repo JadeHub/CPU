@@ -10,6 +10,6 @@ target_sources(
 
 target_include_directories(
     ctrl_lib
-    PUBLIC
-        ${CMAKE_CURRENT_LIST_DIR}
-    )
+    INTERFACE
+	..
+	)

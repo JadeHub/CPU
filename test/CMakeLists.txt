@@ -1,11 +1,14 @@
 add_executable(
     unit_tests
     asm_test.cc
+	parse_test.cc
+	instruction_test.cc
     )
 
 target_link_libraries(
     unit_tests
     gtest_main
+	gmock
     asm_lib
     )
 

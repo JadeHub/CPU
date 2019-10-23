@@ -76,16 +76,16 @@ void make_mov_instructions()
 	make_reg_reg_mov_instr(R_A, false, R_B, false);		//A to B
 	make_reg_reg_mov_instr(R_A, true, R_B, false);		//[A] to B
 	make_reg_reg_mov_instr(R_A, false, R_B, true);		//A to [B]
-	make_reg_reg_mov_instr(R_A, false, R_ALO, true);	//A to ALO
+	make_reg_reg_mov_instr(R_A, false, R_ALO, true);	//A to [ALO]
 	make_reg_reg_mov_instr(R_A, false, R_OUT, false);	//A to OUT
 	make_reg_reg_mov_instr(R_A, true, R_OUT, false);	//[A] to out	
-	make_store_immediate_instr(R_A);					//A to [[PC]] (write to immediate addr)
+	make_store_immediate_instr(R_A);					//A to [[PC]] (write to immediate addr) MOV [42], A
 	
 	//From B
 	make_reg_reg_mov_instr(R_B, false, R_A, false);		//B to A
 	make_reg_reg_mov_instr(R_B, true, R_A, false);		//[B] to A
 	make_reg_reg_mov_instr(R_B, false, R_A, true);		//B to [A]
-	make_reg_reg_mov_instr(R_B, false, R_ALO, true);	//B to ALO
+	make_reg_reg_mov_instr(R_B, false, R_ALO, true);	//B to [ALO]
 	make_reg_reg_mov_instr(R_B, false, R_OUT, false);	//B to OUT
 	make_reg_reg_mov_instr(R_B, true, R_OUT, false);	//[B] to out
 	make_store_immediate_instr(R_B);					//B to [[PC]] (write to immediate addr)
@@ -390,13 +390,9 @@ void generate_arduino_code()
 	std::cout << "#endif //CHIP2" << std::endl;
 }
 
-int main()
+void generate_eeproms()
 {
 	make_instructions();
-	uint32_t val = flip_active_low_signals( eeprom_values[2104]);
-	uint8_t j = val >> 8;
-//	make_eeprom(0);
 	generate_arduino_code();
-    return 0;
 }
 
