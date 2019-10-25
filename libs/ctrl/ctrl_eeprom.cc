@@ -1,6 +1,3 @@
-// ctrl_eeprom.cpp : Defines the entry point for the console application.
-//
-
 #include "constants.h"
 #include <iostream>
 #include <map>
@@ -249,7 +246,7 @@ void make_jmp_instructions()
 	make_cond_immediate_jmp_instr(INSTR_JC, CND_CR);
 }
 
-void make_push_pop_instr(uint8_t reg)
+void make_push_instr(uint8_t reg)
 {
 	//push
 	//sp on bus, dec
@@ -260,13 +257,16 @@ void make_push_pop_instr(uint8_t reg)
 	eeprom_values[make_address(MC_STEP3, instr)] = reg_read(R_ALO) | SPW | MAW;	//ALO to SP and Address
 	eeprom_values[make_address(MC_STEP4, instr)] = reg_read(reg) | MW | MCR; //Write src_reg to memory
 	std::cout << unsigned(instr) << "\t\tPUSH " << source_reg_name(reg, false) << std::endl;
+}
 
+void make_pop_instr(uint8_t reg)
+{
 	//pop
 	//sp to address
 	//mem to dest
 	//sp to bus, inc
 	//alo to sp
-	instr = make_ancillory_instruction_code(INSTR_POP, encode_source_reg(reg, false));
+	uint8_t instr = make_ancillory_instruction_code(INSTR_POP, encode_source_reg(reg, false));
 	eeprom_values[make_address(MC_STEP2, instr)] = reg_read(R_SP) | MAW;	//SP to Address
 	eeprom_values[make_address(MC_STEP3, instr)] = ME | encode_dest_reg(reg, false);	//Memory to dest
 	eeprom_values[make_address(MC_STEP4, instr)] = reg_read(R_SP) | alu_ctrl(ALU_INC); //SP++
@@ -298,8 +298,11 @@ void make_call_instr(uint8_t src_reg, bool deref)
 
 void make_ancillary_instructions()
 {
-	make_push_pop_instr(R_A);
-	make_push_pop_instr(R_B);
+	make_push_instr(R_A);
+	make_pop_instr(R_A);
+	make_push_instr(R_B);
+	make_pop_instr(R_B);
+	make_push_instr(R_ALO);
 
 	make_call_instr(R_A, false);
 	make_call_instr(R_B, false);

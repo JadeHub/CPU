@@ -1,6 +1,6 @@
 add_executable(
     unit_tests
-    asm_test.cc
+    program_test.cc
 	parse_test.cc
 	instruction_test.cc
     )

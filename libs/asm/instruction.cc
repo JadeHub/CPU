@@ -17,7 +17,7 @@ uint8_t GetAncillaryOpCode(const std::string& op)
 		return INSTR_CALL;
 	if (op == "RET")
 		return INSTR_RET;
-	if (op == "HTL")
+	if (op == "HLT")
 		return INSTR_HALT;
 	if (op == "NOOP")
 		return INSTR_NOOP;
@@ -171,7 +171,42 @@ std::vector<uint8_t> Instruction::Encode(std::function<uint8_t(const std::string
 
 std::vector<uint8_t> Instruction::EncodeAncillary() const
 {
-	return std::vector<uint8_t>();
+	const auto op = GetAncillaryOpCode(mLine.OpCode());
+
+	if (op == INSTR_PUSH || op == INSTR_POP)
+	{
+		assert(mParam1);
+		assert(mParam1->IsRegister());
+		return
+		{
+			make_ancillory_instruction_code(op,
+				encode_source_reg(mParam1->Register(), false))
+		};
+	}
+
+	if (op == INSTR_CALL)
+	{
+		assert(mParam1);
+		if (mParam1->IsRegister())
+		{
+			return
+			{
+				make_ancillory_instruction_code(op,
+					encode_source_reg(mParam1->Register(), false))
+			};
+		}
+		if (mParam1->IsLiteral())
+		{
+			return
+			{
+				make_ancillory_instruction_code(op,
+					encode_source_reg(R_PC, false)),
+				mParam1->Literal()
+			};
+		}
+	}
+	// Instruction has no params
+	return {op};
 }
 
 std::vector<uint8_t> Instruction::EncodeAlu() const

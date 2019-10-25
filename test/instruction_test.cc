@@ -13,6 +13,39 @@ void ExpectEncoding(const std::string& code, const std::vector<uint8_t>& expecte
 	EXPECT_EQ(instr.Encode([](const std::string&) {return 0;}), (expected));
 }
 
+TEST(Instruction, HLT)
+{
+	ExpectEncoding("HLT", { 249 });
+}
+
+TEST(Instruction, NOOP)
+{
+	ExpectEncoding("NOOP", { 251 });
+}
+
+TEST(Instruction, RET)
+{
+	ExpectEncoding("RET", { 250 });
+}
+
+TEST(Instruction, PUSH_POP)
+{
+	ExpectEncoding("PUSH A", { 240 });
+	ExpectEncoding("PUSH B", { 242 });
+	ExpectEncoding("PUSH ALO", { 244 });
+	ExpectEncoding("POP A", { 248 });
+	ExpectEncoding("POP B", { 250 });
+}
+
+TEST(Instruction, CALL)
+{
+	ExpectEncoding("CALL A", { 192 });
+	ExpectEncoding("CALL B", { 194 });
+	ExpectEncoding("CALL ALO", { 196 });
+	ExpectEncoding("CALL 124", { 198, 124 });
+
+
+}
 
 TEST(Instruction, ADD)
 {
@@ -43,6 +76,17 @@ TEST(Instruction, JMP_IMM)
 {
 	ExpectEncoding("JMP 12", { 238, 12 });
 	ExpectEncoding("JE 12", { 214, 12 });
+}
+
+TEST(Instruction, JMP_LABEL)
+{
+	Instruction instr(SourceLine::Parse("JMP #label"));
+	std::vector<uint8_t> expected = {238, 12};
+	EXPECT_EQ(instr.Encode([](const std::string& label) 
+	{
+		EXPECT_EQ(label, "label");
+		return 12; 
+	}), expected);
 }
 
 TEST(Instruction, MOV_REG_REG)

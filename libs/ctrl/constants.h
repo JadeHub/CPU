@@ -251,7 +251,7 @@ inline uint32_t alu_ctrl(uint8_t aluOp)
 #define INSTR_POP		0xF8
 #define INSTR_HALT		0xF9
 #define INSTR_RET		0xFA
-#define INSTR_NOOP		0xFF
+#define INSTR_NOOP		0xFB
 /*
 instruction encoding
 bit:				7	6	5	4	3	2	1	0
@@ -268,7 +268,7 @@ ancillary insts:	1	1	X	X	X	X	X	X
 	Pop:			1	1	1	1	1	<- SRC ->		0xF8
 	Halt:			1	1	1	1	1	0	0	1		0xF9
 	Ret:			1	1	1	1	1	0	1	0		0xFA
-	No op:			1	1	1	1	1	1	1	1		0xFF
+	No op:			1	1	1	1	1	0	1	1		0xFB
 	
 * Jmp instructions allow a register or an immediate address
 * Immediate values are loaded by dereferencing the program counter
@@ -298,7 +298,7 @@ OUT		5
 
 */
 
-inline char* source_reg_name(uint8_t reg, bool deref)
+inline const char* source_reg_name(uint8_t reg, bool deref)
 {
 	switch (reg)
 	{
@@ -332,7 +332,7 @@ inline uint8_t encode_source_reg(uint8_t reg, bool deref)
 }
 
 
-inline char* dest_reg_name(uint8_t reg, bool deref)
+inline const char* dest_reg_name(uint8_t reg, bool deref)
 {
 	switch (reg)
 	{
